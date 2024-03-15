@@ -1,0 +1,87 @@
+import React, { useState } from 'react';
+
+// Composant MovieCard
+const MovieCard = ({ movie }) => {
+  return (
+    <div className="movie-card">
+      <img src={movie.posterURL} alt={movie.title} />
+      <h3>{movie.title}</h3>
+      <p>{movie.description}</p>
+      <p>Note : {movie.note}</p>
+    </div>
+  );
+};
+
+// Composant MovieList
+const MovieList = ({ movies }) => {
+  return (
+    <div className="movie-list">
+      {movies.map((movie, index) => (
+        <MovieCard key={index} movie={movie} />
+      ))}
+    </div>
+  );
+};
+
+// Composant Filtre
+const Filtre = ({ filterTitle, filterRate, onFilterTitleChange, onFilterRateChange }) => {
+  return (
+    <div className="filter">
+      <input type="text" placeholder="Filtrer par titre" value={filterTitle} onChange={onFilterTitleChange} />
+      <input type="number" placeholder="Filtrer par note" value={filterRate} onChange={onFilterRateChange} />
+    </div>
+  );
+};
+
+// App principale
+const App = () => {
+  const [movies, setMovies] = useState([
+    { title: "Film 1", description: "Description du Film 1", posterURL: "url1", note: 4 },
+    { title: "Film 2", description: "Description du Film 2", posterURL: "url2", note: 3 },
+    { title: "Film 3", description: "Description du Film 3", posterURL: "url3", note: 5 }
+  ]);
+
+  const [filterTitle, setFilterTitle] = useState('');
+  const [filterRate, setFilterRate] = useState('');
+
+  const handleFilterTitleChange = (event) => {
+    setFilterTitle(event.target.value);
+  };
+
+  const handleFilterRateChange = (event) => {
+    setFilterRate(event.target.value);
+  };
+
+  const filteredMovies = movies.filter(movie => {
+    return (
+      movie.title.toLowerCase().includes(filterTitle.toLowerCase()) &&
+      (!filterRate || movie.note >= filterRate)
+    );
+  });
+
+  const addNewMovie = () => {
+    const newMovie = {
+      title: "Nouveau Film",
+      description: "Description du Nouveau Film",
+      posterURL: "url4",
+      note: 4
+    };
+    setMovies([...movies, newMovie]);
+  };
+
+  return (
+    <div className="app">
+      <h1>Liste de films</h1>
+      <Filtre
+        filterTitle={filterTitle}
+        filterRate={filterRate}
+        onFilterTitleChange={handleFilterTitleChange}
+        onFilterRateChange={handleFilterRateChange}
+      />
+      <MovieList movies={filteredMovies} />
+      <button onClick={addNewMovie}>Ajouter un nouveau film</button>
+    </div>
+  );
+};
+
+export default App;
